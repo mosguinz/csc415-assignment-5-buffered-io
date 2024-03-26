@@ -106,8 +106,10 @@ b_io_fd b_open(char *filename, int flags)
 	fcb.remaining = B_CHUNK_SIZE;
 	fcb.start = 0;
 	fcb.bytes_read = 0;
-	fcb.block = fi->location;
+	fcb.block = LBAread(fcb.buffer, 1, fi->location);
 	fcbArray[fd] = fcb;
+
+	printf("fn: %s | size: %d\n", fi->fileName, fi->fileSize);
 
 	return fd;
 }
