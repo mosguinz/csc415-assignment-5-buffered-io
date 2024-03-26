@@ -184,4 +184,5 @@ int b_close(b_io_fd fd)
 	//*** TODO ***//  Release any resources
 	if (fcbArray[fd].buffer)
 		free(fcbArray[fd].buffer);
+	fcbArray[fd].fi = NULL;
 }
