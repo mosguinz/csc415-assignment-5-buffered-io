@@ -110,8 +110,6 @@ b_io_fd b_open(char *filename, int flags)
 	fcb.block = LBAread(fcb.buffer, 1, fi->location);
 	fcbArray[fd] = fcb;
 
-	printf("fn: %s | size: %d\n", fi->fileName, fi->fileSize);
-
 	return fd;
 }
 
