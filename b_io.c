@@ -91,6 +91,25 @@ b_io_fd b_open(char *filename, int flags)
 	//				  But make sure every file has its own buffer
 
 	// This is where you are going to want to call GetFileInfo and b_getFCB
+	fileInfo *fi = GetFileInfo(filename);
+	int fd = b_getFCB();
+
+	// Abort if file not found.
+	if (fi == NULL)
+		return -1;
+
+	// Initialize FCB and place it into `fcbArray`.
+	b_fcb fcb;
+	fcb.fi = fi;
+	fcb.fd = fd;
+	fcb.buffer = malloc(B_CHUNK_SIZE);
+	fcb.remaining = B_CHUNK_SIZE;
+	fcb.start = 0;
+	fcb.bytes_read = 0;
+	fcb.block = fi->location;
+	fcbArray[fd] = fcb;
+
+	return fd;
 }
 
 // b_read functions just like its Linux counterpart read.  The user passes in
