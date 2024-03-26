@@ -15,6 +15,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <fcntl.h>
+#include <memory.h>
 
 #include "b_io.h"
 #include "fsLowSmall.h"
@@ -143,6 +144,39 @@ int b_read(b_io_fd fd, char *buffer, int count)
 
 	// Your Read code here - the only function you call to get data is LBAread.
 	// Track which byte in the buffer you are at, and which block in the file
+	int total_read = 0;
+
+	// Adjust count if reading beyond end of file.
+	if (fcbArray[fd].bytes_read + count >= fcbArray[fd].fi->fileSize)
+	{
+		count = fcbArray[fd].fi->fileSize - fcbArray[fd].bytes_read;
+	}
+
+	// Read from buffer.
+	while (total_read < count && fcbArray[fd].remaining)
+	{
+		int to_copy = (count - total_read < fcbArray[fd].remaining)
+						  ? count - total_read
+						  : fcbArray[fd].remaining;
+
+		// Copy the remaining bytes into the buffer and update positions.
+		memcpy(buffer + total_read, fcbArray[fd].buffer + fcbArray[fd].start, to_copy);
+		total_read += to_copy;
+		fcbArray[fd].start += to_copy;
+		fcbArray[fd].remaining -= to_copy;
+
+		// If there are no remaining space in our buffer, get a new block.
+		if (fcbArray[fd].remaining == 0)
+		{
+			fcbArray[fd].start = 0;
+			fcbArray[fd].block += LBAread(fcbArray[fd].buffer, 1, fcbArray[fd].block);
+			fcbArray[fd].remaining = B_CHUNK_SIZE;
+		}
+	}
+
+	// Update number of bytes read.
+	fcbArray[fd].bytes_read += total_read;
+	return total_read;
 }
 
 // b_close frees and allocated memory and places the file control block back
