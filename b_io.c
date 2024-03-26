@@ -148,4 +148,6 @@ int b_read(b_io_fd fd, char *buffer, int count)
 int b_close(b_io_fd fd)
 {
 	//*** TODO ***//  Release any resources
+	if (fcbArray[fd].buffer)
+		free(fcbArray[fd].buffer);
 }
