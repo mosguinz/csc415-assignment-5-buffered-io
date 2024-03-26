@@ -7,7 +7,8 @@
  *
  * File:: b_io.c
  *
- * Description::
+ * Description:: This assignment involves writing a C program designed
+ * 				 to copy a specified number of bytes from a provided file.
  *
  **************************************************************/
 #include <stdio.h>
