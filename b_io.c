@@ -29,6 +29,12 @@ typedef struct b_fcb
 	fileInfo *fi; // holds the low level systems file info
 
 	// Add any other needed variables here to track the individual open file
+	b_io_fd fd;
+	char *buffer;
+	size_t start;
+	size_t remaining;
+	size_t block;
+	size_t bytes_read;
 
 } b_fcb;
 
